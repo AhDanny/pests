@@ -3,10 +3,10 @@
 import torch
 from torch import nn
 import torch.nn.functional as F
-from networks import resnet
-from config import coordinates_cat, iou_threshs, window_nums_sum, ratios, N_list
+from insect.code.networks import resnet
+from insect.code.config import coordinates_cat, iou_threshs, window_nums_sum, ratios, N_list
 import numpy as np
-from utils.AOLM import AOLM
+from insect.code.utils.AOLM import AOLM
 
 def nms(scores_np, proposalN, iou_threshs, coordinates):
     if not (type(scores_np).__module__ == 'numpy' and len(scores_np.shape) == 2 and scores_np.shape[1] == 1):

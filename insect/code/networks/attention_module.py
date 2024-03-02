@@ -7,7 +7,7 @@ import functools
 from torch.autograd import Variable
 import numpy as np
 
-from networks.basic_layers import ResidualBlock
+from insect.code.networks.basic_layers import ResidualBlock
 
 
 class AttentionModule_pre(nn.Module):

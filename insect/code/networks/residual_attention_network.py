@@ -6,9 +6,9 @@ from torch.nn import init
 # import functools
 from torch.autograd import Variable
 # import numpy as np
-from networks.basic_layers import ResidualBlock
-from networks.attention_module import AttentionModule_stage1, AttentionModule_stage2, AttentionModule_stage3, AttentionModule_stage0
-from networks.attention_module import AttentionModule_stage1_cifar, AttentionModule_stage2_cifar, AttentionModule_stage3_cifar
+from insect.code.networks.basic_layers import ResidualBlock
+from insect.code.networks.attention_module import AttentionModule_stage1, AttentionModule_stage2, AttentionModule_stage3, AttentionModule_stage0
+from insect.code.networks.attention_module import AttentionModule_stage1_cifar, AttentionModule_stage2_cifar, AttentionModule_stage3_cifar
 
 class ResidualAttentionModel_56(nn.Module):
     """Residual Attention Networks for input size 224"""
