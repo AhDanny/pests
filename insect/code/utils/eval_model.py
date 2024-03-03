@@ -5,9 +5,9 @@ from barbar import Bar
 import os
 from tensorboardX import SummaryWriter
 import numpy as np
-from config import coordinates_cat, proposalN, vis_num
-from utils.cal_iou import calculate_iou
-from utils.vis import image_with_boxes
+from insect.code.config import coordinates_cat, proposalN, vis_num
+from insect.code.utils.cal_iou import calculate_iou
+from insect.code.utils.vis import image_with_boxes
 
 def eval(model, testloader, criterion, status, save_path, epoch):
     model.eval()

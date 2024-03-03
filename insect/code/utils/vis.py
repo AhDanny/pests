@@ -2,7 +2,7 @@
 """This code is refer from https://github.com/ZF4444/MMAL-Net"""
 import numpy as np
 import cv2
-from config import proposalN
+from insect.code.config import proposalN
 
 def image_with_boxes(image, coordinates=None, color=None):
     '''

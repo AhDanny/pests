@@ -6,8 +6,8 @@ import glob
 import torch
 from barbar import Bar
 from tensorboardX import SummaryWriter
-from config import max_checkpoint_num, proposalN, eval_trainset
-from utils.eval_model import eval
+from insect.code.config import max_checkpoint_num, proposalN, eval_trainset
+from insect.code.utils.eval_model import eval
 
 def train(model,
           trainloader,

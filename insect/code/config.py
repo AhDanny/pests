@@ -1,7 +1,7 @@
 """This code is refer to https://github.com/ZF4444/MMAL-Net"""
 
-from utils.indices2coordinates import indices2coordinates
-from utils.compute_window_nums import compute_window_nums
+from insect.code.utils.indices2coordinates import indices2coordinates
+from insect.code.utils.compute_window_nums import compute_window_nums
 import numpy as np
 import os
 
