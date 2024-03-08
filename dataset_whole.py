@@ -39,7 +39,7 @@ class DatasetWhole(Dataset):
 
 if __name__ == "__main__":
     dataloader=DataLoader()
-    dataset = DatasetWhole(root_dir="shujuji")
+    dataset = DatasetWhole(root_dir="data1")
     print("Number of images:", len(dataset))
     img, label = dataset[0]
     print("Label:", label)

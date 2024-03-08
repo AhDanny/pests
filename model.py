@@ -1,15 +1,17 @@
 import torch
 import torch.nn as nn
 from resnetA import Residual
-
+from resnetB import Residual as ResNetB
+from CLIP.clip import clip_pest
 
 class Model(nn.Module):
     def __init__(self,numclass):
         super().__init__()
         self.netA=Residual(3,3)
         channels=3#两条支路的分类的通道数量之和
-        # self.netB=
+        self.netB=
         self.FC=nn.Linear(channels,numclass)#numclass是分类的数量
+        self.clip=clip_pest()
 
     def forward(self,x):
         x0=self.netA(x)

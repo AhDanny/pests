@@ -4,7 +4,7 @@ from torchvision import transforms
 from torch.utils.data import DataLoader
 from dataset_netB import DatasetNetB
 import tensorboard
-from model import Model#模型B的
+from resnetB import resnetB
 from torch.optim.lr_scheduler import CosineAnnealingLR
 import torch.optim as optim
 from torch.utils.data import DataLoader
@@ -15,44 +15,38 @@ import datetime
 
 
 batch_size=256
-dataset_name='shujuji'
+dataset_name='data1'
 img_size=195
 input_size=190
 epoch_num=80
-device='cpu'
+device='cuda:0'
 file_path=f"model_{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}.pth"#以开始训练的时间作为模型文件名字
 tag=f"model_{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"#以开始训练的时间作为模型在tensorboard的名字
 
 # 数据预处理方式
 data_transforms = {
     'train': transforms.Compose([
-        transforms.Resize(img_size),
-        transforms.RandomCrop(input_size),
-        transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ]),
     'val': transforms.Compose([
-        transforms.Resize(img_size),
-        transforms.CenterCrop(input_size),
-        transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ])
 }
 
 # 数据集路径
 train_root_path = os.path.join(os.getcwd(), dataset_name, 'train')
-valid_root_path = os.path.join(os.getcwd(), dataset_name, 'valid')
+valid_root_path = os.path.join(os.getcwd(), dataset_name, 'val')
 
 
 # 创建自定义数据集实例
-train_dataset = DatasetNetB(root=train_root_path, transform=data_transforms['train'])
-valid_dataset = DatasetNetB(root=valid_root_path, transform=data_transforms['val'])
+train_dataset = DatasetNetB(root_dir=train_root_path, transform=data_transforms['train'])
+valid_dataset = DatasetNetB(root_dir=valid_root_path, transform=data_transforms['val'])
 
 # 创建数据加载器
-trainloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=8, pin_memory=True)
-validloader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=False, num_workers=8, pin_memory=True)
+trainloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, pin_memory=True)
+validloader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=False, pin_memory=True)
 
-model=Model()
+model=resnetB(4)
 model.to(device)
 crossentropyloss=CrossEntropyLoss().to(device=device)
 writer = SummaryWriter("mylog")
@@ -68,8 +62,10 @@ for epoch in range(epoch_num):
     sum_loss = 0
     model.train()
     for indx,(x,label) in enumerate(trainloader):
+        x=x.to(device)
+        label=label.to(device).long()
         output = model(x)
-        loss = crossentropyloss(output, label.float())
+        loss = crossentropyloss(output, label)
         optimizer.zero_grad()
         loss.backward()
         top1_acc = torch.eq(output, label).float().mean()
@@ -82,9 +78,11 @@ for epoch in range(epoch_num):
                                                                          sum_top1_acc / len(train_dataset)
                                                                          ))
     model.eval()
-    for indx,(x,label) in enumerate(trainloader):
+    for indx,(x,label) in enumerate(validloader):
+        x=x.to(device)
+        label=label.to(device).long()
         output = model(x)
-        loss = crossentropyloss(output, label.float())
+        loss = crossentropyloss(output, label)
         top1_acc = torch.eq(output, label).float().mean()
         sum_loss += loss.item()
         sum_top1_acc += top1_acc
@@ -93,7 +91,7 @@ for epoch in range(epoch_num):
                                                                          sum_loss / len(valid_dataset),
                                                                          sum_top1_acc / len(valid_dataset)
                                                                          ))
-    writer.add_scalars(tag,{'LOSS/Train_loss':float(sum_loss / len(train_dataset)),'ACC/Train_acc':float(sum_top1_acc / len(train_dataset)),
+    writer.add_scalars(tag,{'LOSS/Train_loss':float(sum_loss / len(valid_dataset)),'ACC/Train_acc':float(sum_top1_acc / len(valid_dataset)),
                            'LOSS/val_loss':float(sum_loss / len(valid_dataset)),'ACC/val_acc':float(sum_top1_acc / len(valid_dataset))},
                       (epoch + 1))
     torch.save(model.state_dict(), file_path)

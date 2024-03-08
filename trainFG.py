@@ -19,8 +19,8 @@ from torch.utils.data import DataLoader
 import argparse
 import os
 
-dataset_name='shujuji'
-device='cpu'
+dataset_name='data'
+device='cuda:0'
 os.environ['CUDA_VISIBLE_DEVICES'] = CUDA_VISIBLE_DEVICES
 size=195
 input_size=190

@@ -15,7 +15,7 @@ import datetime
 
 numclass=4#标签的数量
 batch_size=256
-dataset_name='shujuji'#数据集的根目录
+dataset_name='data1'#数据集的根目录
 img_size=195
 input_size=190
 epoch_num=80
