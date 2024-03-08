@@ -23,6 +23,13 @@ device='cpu'
 file_path=f"model_{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}.pth"#以开始训练的时间作为模型文件名字
 tag=f"model_{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"#以开始训练的时间作为模型在tensorboard的名字
 
+def accuracy(outputs, labels):
+    _, predicted = torch.max(outputs, 1)  # 在第一个维度上取最大值的索引作为预测结果
+    correct = (predicted == labels).sum().item()  # 计算预测正确的样本数量
+    total = labels.size(0)  # 总样本数量
+    accuracy = correct / total  # 计算精确度
+    return accuracy
+
 # 数据预处理方式
 data_transforms = {
     'train': transforms.Compose([
@@ -72,7 +79,7 @@ for epoch in range(epoch_num):
         loss = crossentropyloss(output, label.float())
         optimizer.zero_grad()
         loss.backward()
-        top1_acc = torch.eq(output, label).float().mean()
+        top1_acc = accuracy(output, label)
         optimizer.step()
         sum_loss += loss.item()
         sum_top1_acc += top1_acc
@@ -93,7 +100,7 @@ for epoch in range(epoch_num):
                                                                          sum_loss / len(valid_dataset),
                                                                          sum_top1_acc / len(valid_dataset)
                                                                          ))
-    writer.add_scalars(tag,{'LOSS/Train_loss':float(sum_loss / len(train_dataset)),'ACC/Train_acc':float(sum_top1_acc / len(train_dataset)),
+    writer.add_scalars(tag,{'LOSS/Train_loss':float(sum_loss / len(valid_dataset)),'ACC/Train_acc':float(sum_top1_acc / len(valid_dataset)),
                            'LOSS/val_loss':float(sum_loss / len(valid_dataset)),'ACC/val_acc':float(sum_top1_acc / len(valid_dataset))},
                       (epoch + 1))
     torch.save(model.state_dict(), file_path)
